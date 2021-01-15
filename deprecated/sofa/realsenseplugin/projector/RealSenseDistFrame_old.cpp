@@ -24,7 +24,7 @@
 ******************************************************************************/
 
 
-#include "RealSenseDistFrame.h"
+#include "RealSenseDistFrame_old.h"
 #include <sofa/core/ObjectFactory.h>
 
 namespace sofa
@@ -40,15 +40,15 @@ using namespace boost;
 
 // Register in the Factory
 
-SOFA_DECL_CLASS (RealSenseDistFrameExporter)
-SOFA_DECL_CLASS (RealSenseDistFrameStreamer)
+SOFA_DECL_CLASS (RealSenseDistFrameExporter_old)
+SOFA_DECL_CLASS (RealSenseDistFrameStreamer_old)
 
-int DistFrameExporterClass = core::RegisterObject ( "exports distance frames in a file" )
-        .add<RealSenseDistFrameExporter>(true)
+int DistFrameExporterOldClass = core::RegisterObject ( "exports distance frames in a file" )
+        .add<RealSenseDistFrameExporter_old>(true)
         ;
 
-int DistFrameStreamerClass = core::RegisterObject ( "imports distance frames from a file" )
-        .add<RealSenseDistFrameStreamer>(true)
+int DistFrameStreamerOldClass = core::RegisterObject ( "imports distance frames from a file" )
+        .add<RealSenseDistFrameStreamer_old>(true)
         ;
 
 

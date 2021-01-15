@@ -47,7 +47,7 @@ using DataCallback = core::objectmodel::DataCallback ;
  * \brief The RealSenseDistFrame class
  * Used for distance frame usage as sofa data by components
  */
-class RealSenseDistFrame {
+class RealSenseDistFrame_old {
 public :
     typedef struct {
         size_t _width ;
@@ -56,9 +56,9 @@ public :
     } RealSenseDistStruct ;
     RealSenseDistStruct _distdata ;
 
-    RealSenseDistFrame () {}
+    RealSenseDistFrame_old () {}
 
-    RealSenseDistFrame (RealSenseDistStruct diststr) {
+    RealSenseDistFrame_old (RealSenseDistStruct diststr) {
         _distdata = diststr ;
     }
 
@@ -85,12 +85,12 @@ public :
         return _distdata ;
     }
 
-    friend std::istream& operator >> ( std::istream& in, RealSenseDistFrame&  )
+    friend std::istream& operator >> ( std::istream& in, RealSenseDistFrame_old&  )
     {
         return in;
     }
 
-    friend std::ostream& operator << ( std::ostream& out, const RealSenseDistFrame&  )
+    friend std::ostream& operator << ( std::ostream& out, const RealSenseDistFrame_old&  )
     {
         return out;
     }
@@ -100,34 +100,34 @@ public :
  * \brief The RealSenseDistFrameExporter class
  * exports distance frames to file for offline processing
  */
-class RealSenseDistFrameExporter : public core::objectmodel::BaseObject
+class RealSenseDistFrameExporter_old : public core::objectmodel::BaseObject
 {
 
 public:
-    SOFA_CLASS( RealSenseDistFrameExporter , core::objectmodel::BaseObject);
+    SOFA_CLASS( RealSenseDistFrameExporter_old , core::objectmodel::BaseObject);
     typedef core::objectmodel::BaseObject Inherited;
 
     Data<std::string>  d_filename ;
     DataCallback c_distframe ;
 
-    Data<RealSenseDistFrame>  d_distframe ;
+    Data<RealSenseDistFrame_old>  d_distframe ;
     DataCallback c_filename ;
 
     Data<int> d_fpf; // frame per file
 
-    RealSenseDistFrameExporter()
+    RealSenseDistFrameExporter_old()
         : d_filename (initData(&d_filename, "filename", "output filename"))
         , d_distframe (initData(&d_distframe, "distframe", "link to distFrame data"))
         , d_fpf(initData(&d_fpf, 18000, "fpf", "frame per file"))
     {
         c_distframe.addInput(&d_distframe);
-        c_distframe.addCallback(std::bind(&RealSenseDistFrameExporter::saveFrame, this));
+        c_distframe.addCallback(std::bind(&RealSenseDistFrameExporter_old::saveFrame, this));
         filestream = nullptr ;
         frame_count = 0 ;
         file_id = 0 ;
     }
 
-    ~RealSenseDistFrameExporter() {
+    ~RealSenseDistFrameExporter_old() {
         std::fclose(filestream) ;
     }
 
@@ -141,8 +141,8 @@ public:
 
     ///\brief write the frame in an opened binary file stream
     void saveFrameToStream() {
-        RealSenseDistFrame distframe = d_distframe.getValue() ;
-        RealSenseDistFrame::RealSenseDistStruct diststruct = distframe.getFrame();
+        RealSenseDistFrame_old distframe = d_distframe.getValue() ;
+        RealSenseDistFrame_old::RealSenseDistStruct diststruct = distframe.getFrame();
 
         // write width and height
         std::fwrite(&diststruct._width, sizeof(size_t), 1, filestream) ;
@@ -195,26 +195,26 @@ protected :
  * Streams through distance frames in a file
  * Implements BaseOpenCVStreamer
  */
-class RealSenseDistFrameStreamer : public opencvplugin::streamer::BaseOpenCVStreamer
+class RealSenseDistFrameStreamer_old : public opencvplugin::streamer::BaseOpenCVStreamer
 {
 
 public:
-    SOFA_CLASS( RealSenseDistFrameStreamer, opencvplugin::streamer::BaseOpenCVStreamer);
+    SOFA_CLASS( RealSenseDistFrameStreamer_old, opencvplugin::streamer::BaseOpenCVStreamer);
     typedef opencvplugin::streamer::BaseOpenCVStreamer Inherited;
 
     Data<std::string>  d_filename ;
-    Data<RealSenseDistFrame>  d_distframe ;
+    Data<RealSenseDistFrame_old>  d_distframe ;
 
     DataCallback c_filename ;
     std::FILE* filestream ;
 
-    RealSenseDistFrameStreamer()
+    RealSenseDistFrameStreamer_old()
         : Inherited()
         , d_filename (initData(&d_filename, "filename", "output filename"))
         , d_distframe (initData(&d_distframe, "distframe", "link to distFrame data"))
     {
         c_filename.addInput(&d_filename);
-        c_filename.addCallback(std::bind(&RealSenseDistFrameStreamer::updateFileStream, this));
+        c_filename.addCallback(std::bind(&RealSenseDistFrameStreamer_old::updateFileStream, this));
         filestream = nullptr ;
     }
 
@@ -240,7 +240,7 @@ public:
             return ;
         }
 
-        RealSenseDistFrame::RealSenseDistStruct diststruct ;
+        RealSenseDistFrame_old::RealSenseDistStruct diststruct ;
         // write width and height
         std::fread(&diststruct._width, sizeof(size_t), 1, filestream) ;
         std::fread(&diststruct._height, sizeof(size_t), 1, filestream) ;
@@ -253,7 +253,7 @@ public:
             diststruct._width * diststruct._height,
             filestream
         ) ;
-        RealSenseDistFrame distFrm (diststruct) ;
+        RealSenseDistFrame_old distFrm (diststruct) ;
         d_distframe.setValue(distFrm);
     }
 } ;
