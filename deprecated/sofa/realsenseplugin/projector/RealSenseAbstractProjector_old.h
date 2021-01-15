@@ -59,7 +59,7 @@
 #include <sofa/PCLPlugin/PointCloudData.h>
 
 #include <sofa/realsenseplugin/streamer/RealSenseCam.h>
-#include <sofa/realsenseplugin/projector/RealSenseDistFrame.h>
+#include <../deprecated/sofa/realsenseplugin/projector/RealSenseDistFrame_old.h>
 
 namespace sofa {
 
@@ -88,7 +88,7 @@ public :
     DataCallback c_scale ;
 
     /// \brief distance frame for offline reco
-    Data<RealSenseDistFrame> d_distframe ;
+    Data<RealSenseDistFrame_old> d_distframe ;
     /// \brief path to intrinsics file
     Data<std::string> d_intrinsics ;
     DataCallback c_intrinsics ;
@@ -106,7 +106,7 @@ public :
     /// \brief link for realsense camera
     core::objectmodel::SingleLink<
         RealSenseAbstractDeprojector_old,
-        RealSenseCam,
+        sofa::realsenseplugin::RealSenseCam,
         BaseLink::FLAG_STOREPATH|BaseLink::FLAG_STRONGLINK
     > l_rs_cam ; //for intrinsics
 
@@ -232,8 +232,8 @@ public :
     inline void deproject_image_offline () {
         helper::AdvancedTimer::stepBegin("RS Deprojection offline") ;
         cv::Mat depth_im = d_depth.getValue().getImage() ;
-        RealSenseDistFrame distframe = d_distframe.getValue() ;
-        RealSenseDistFrame::RealSenseDistStruct diststruct = distframe.getFrame() ;
+        RealSenseDistFrame_old distframe = d_distframe.getValue() ;
+        RealSenseDistFrame_old::RealSenseDistStruct diststruct = distframe.getFrame() ;
         int downSample = d_downsampler.getValue() ;
 
         if (diststruct._width != (size_t)(depth_im.cols/downSample) ||
@@ -262,7 +262,7 @@ public :
         // get depth image, and downsampling value
         int downSample = d_downsampler.getValue() ;
         cv::Mat depth_im = d_depth.getValue().getImage() ;
-        RealSenseDistFrame::RealSenseDistStruct & diststruct = *d_distframe.beginEdit();
+        RealSenseDistFrame_old::RealSenseDistStruct & diststruct = *d_distframe.beginEdit();
         diststruct._width = depth_im.cols/downSample ;
         diststruct._height = depth_im.rows/downSample ;
         diststruct.frame = new float[
@@ -288,7 +288,7 @@ public :
         }
         helper::AdvancedTimer::stepEnd("RS Deprojection draw") ;
     }
-    inline void push_to_pointcloud(helper::vector<defaulttype::Vector3> & outpoints, size_t i, size_t j, int index, RealSenseDistFrame::RealSenseDistStruct& diststruct, float dist)
+    inline void push_to_pointcloud(helper::vector<defaulttype::Vector3> & outpoints, size_t i, size_t j, int index, RealSenseDistFrame_old::RealSenseDistStruct& diststruct, float dist)
     {
         float
             point3d[3] = {0.f, 0.f, 0.f},
@@ -359,12 +359,12 @@ public :
 private :
     /// \brief write to output sofa data
     virtual void writeOfflineToOutput (
-        RealSenseDistFrame::RealSenseDistStruct & diststruct,
+        RealSenseDistFrame_old::RealSenseDistStruct & diststruct,
         const cv::Mat & depth_im,
         int downSample) = 0 ;
     virtual void writeOnlineToOutput (
         rs2::depth_frame & depth,
-        RealSenseDistFrame::RealSenseDistStruct & diststruct,
+        RealSenseDistFrame_old::RealSenseDistStruct & diststruct,
         const cv::Mat & depth_im,
         int downSample) = 0 ;
 

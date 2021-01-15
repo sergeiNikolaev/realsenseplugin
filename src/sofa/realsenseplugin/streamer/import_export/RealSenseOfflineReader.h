@@ -48,6 +48,8 @@ public:
     SOFA_CLASS( RealSenseOfflineReader , core::objectmodel::BaseObject );
 	typedef core::objectmodel::BaseObject Inherited;
 
+    Data<defaulttype::Vector2> d_resolution;
+
     /// \brief path to color video
     sofa::core::objectmodel::DataFileName d_path_color ;
     /// \brief path to depth video
@@ -69,6 +71,7 @@ public:
     /// \brief true to render synthetic pointcloud
     Data<bool> d_drawsynth ;
 
+
     /// \brief resp. opencv color and depth streams
     cv::VideoCapture _reader_color, _reader_depth ;
     /// \brief file stream for saving pointcloud frames
@@ -78,6 +81,7 @@ public:
 
     RealSenseOfflineReader()
         : Inherited()
+        , d_resolution(initData(&d_resolution, defaulttype::Vector2(640, 480), "resolution", "realsense camera resolution"))
         , d_path_color(initData(&d_path_color, "pathcolor", "path to 3D video to write"))
         , d_path_depth(initData(&d_path_depth, "pathdepth", "depth path to 3D video to write"))
         , d_path_pcl(initData(&d_path_pcl, "pathpcl", "path to pointcloud video to write"))
@@ -100,6 +104,13 @@ public:
         opencolor () ;
         opendepth () ;
         openpcl();
+        d_rsframe.setValue(
+            RealSenseDataFrame(
+                readcolor (),
+                readdepth (),
+                readpcl()
+        )) ;
+        makeSyntheticVolume();
 	}
 
     ~RealSenseOfflineReader () {
@@ -122,7 +133,7 @@ public:
             vparams->drawTool()->drawSphere(output[i], 0.002);
         }
         if (!d_drawsynth.getValue()) {
-        // don't draw point cloud
+            // don't draw point cloud
             return ;
         }
         output = d_synthvolume.getValue() ;
@@ -205,6 +216,7 @@ public:
     cv::Mat readcolor () {
         cv::Mat out ;
         if (!_reader_color.isOpened()) return out ;
+        _reader_color.grab();
         _reader_color.retrieve(out) ;
         return out ;
     }
@@ -215,6 +227,7 @@ public:
     cv::Mat readdepth () {
         cv::Mat out ;
         if (!_reader_depth.isOpened()) return out ;
+        _reader_depth.grab();
         _reader_depth.retrieve(out) ;
         return out ;
     }

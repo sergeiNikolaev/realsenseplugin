@@ -59,7 +59,7 @@
 	<Node name="surface" >
 	    <RealSenseOfflineReader
 		    name="deproj"
-			pathpcl="/home/omar/Data/PBOct2020/9/pointcloudSurface1.pcl"
+			pathpcl="/data/PBOct2020/9/pointcloudSurface1.pcl"
 			densify="8"
 			drawpcl="1" />
 		<MechanicalObject template="Vec3d" name="MO" position="@deproj.output" />
@@ -76,7 +76,7 @@
 
         <MeshVTKLoader
 		    name="vloader"
-			filename="/home/omar/Downloads/r_02_lt_1231_nodes.vtk"
+			filename="r_02_lt_1231_nodes.vtk"
 			scale3d="0.001 0.001 0.001" />
 
         <TetrahedronSetTopologyContainer name="Container" position="@vloader.position" tetrahedra="@vloader.tetrahedra" />

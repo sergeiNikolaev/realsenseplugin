@@ -72,8 +72,12 @@ private :
                 ) {
                     // deprojection
 //                    push_to_pointcloud(outpoints, depth_im, downSample*i, downSample*j);
-                    push_to_pointcloud(outpoints, downSample*i, downSample*j,
-                                       l_rs_cam->depth->get_distance(downSample*j,downSample*i));
+                    if (l_rs_cam) {
+                        push_to_pointcloud(outpoints, downSample*i, downSample*j,
+                                           l_rs_cam->depth->get_distance(downSample*j,downSample*i));
+                    } else {
+                        push_to_pointcloud (outpoints, depth_im, downSample*i, downSample*j);
+                    }
                 }
             }
         }

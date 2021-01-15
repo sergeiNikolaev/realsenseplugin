@@ -24,7 +24,7 @@
 ******************************************************************************/
 #pragma once
 
-#include <sofa/realsenseplugin/projector/RealSenseAbstractProjector_old.h>
+#include <../deprecated/sofa/realsenseplugin/projector/RealSenseAbstractProjector_old.h>
 
 namespace sofa {
 
@@ -56,7 +56,7 @@ public:
     }
 
 private :
-    virtual void writeOfflineToOutput (RealSenseDistFrame::RealSenseDistStruct & diststruct, const cv::Mat & depth_im, int downSample) override {
+    virtual void writeOfflineToOutput (RealSenseDistFrame_old::RealSenseDistStruct & diststruct, const cv::Mat & depth_im, int downSample) override {
         // setup output
         // const cv::Mat & input =  d_input.getValue().getImage() ;
         cv::Mat input ;
@@ -81,7 +81,7 @@ private :
         d_output.endEdit();
     }
 
-    virtual void writeOnlineToOutput (rs2::depth_frame & depth, RealSenseDistFrame::RealSenseDistStruct & diststruct, const cv::Mat & depth_im, int downSample) override {
+    virtual void writeOnlineToOutput (rs2::depth_frame & depth, RealSenseDistFrame_old::RealSenseDistStruct & diststruct, const cv::Mat & depth_im, int downSample) override {
         // setup output
         const cv::Mat & input = d_input.getValue().getImage() ; //.copyTo(input);
         //cv::cvtColor(d_input.getValue().getImage(), input, CV_BGR2GRAY); ;

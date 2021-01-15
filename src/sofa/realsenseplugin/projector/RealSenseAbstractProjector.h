@@ -352,12 +352,20 @@ public :
      */
     void push_to_pointcloud(helper::vector<defaulttype::Vector3> & outpoints, const cv::Mat & depth_im, size_t i, size_t j)
     {
-        float depthvalue = depth_im.at<float>(i,j)  ;
+        float depthvalue = (float)(depth_im.at<const uchar>(i,j));
+        //std::cout << "Depth value: " << depthvalue << std::endl;
+        //std::cout << "Camera parameters: " << ppx << " " << " " << ppy << " " << inv_fx << " " << inv_fy << std::endl;
+        //float point3d[3] = {
+        //    (j - ppx) * depthvalue * inv_fx * .1,
+        //    (i - ppy) * depthvalue * inv_fy * .1,
+        //    depthvalue
+        //} ;
         float point3d[3] = {
-            (j - ppx) * depthvalue * inv_fx * .1,
-            (i - ppy) * depthvalue * inv_fy * .1,
+            (i - ppx) * depthvalue * inv_fx * .1,
+            (j - ppy) * depthvalue * inv_fy * .1,
             depthvalue
         } ;
+
 //        // check for outliers
 //        if (std::abs(point3d[0]) < 1e-3 ||
 //            std::abs(point3d[1]) < 1e-3 ||
@@ -368,10 +376,13 @@ public :
 //        //invalid point
 //            return ;
 //        }
-
+        std::cout << "Point coordiantes: X: " <<  point3d[0] << " Y: " <<  point3d[1] << " Z: " <<  point3d[2] << std::endl;
         defaulttype::Vector3 point = scalePoint(point3d) ;
         //m_pointcloud->push_back(pt);
+        std::cout << "Point coordiantes: X: " <<  point[0] << " Y: " <<  point[1] << " Z: " <<  point[2] << std::endl;
+
         m_pointcloud.push_back(point) ;
+        std::cout << "Next point" << std::endl;
 
         if (d_flip.getValue()) {
             point = defaulttype::Vector3(point[1], point[0], - point[2]) ;
@@ -412,11 +423,12 @@ public :
      * \return scaled point as pcl::PointXYZ
      */
     inline defaulttype::Vector3 scalePoint (float * point3d) {
-        float scale = (float)d_scale.getValue()/100.f ;
+        float z_scale = 0.1, z_shift = 35.0;
+        float scale = (float)d_scale.getValue()/100.f * 0.64f;
         return defaulttype::Vector3 (
             scale*point3d[0],
             scale*point3d[1],
-            -scale*point3d[2]
+            -scale*(point3d[2] - z_shift) * z_scale
         ) ;
     }
 

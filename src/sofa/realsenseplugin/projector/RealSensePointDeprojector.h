@@ -69,8 +69,11 @@ private :
             if (depth_ij > d_minmax.getValue()[0] &&
                 depth_ij < d_minmax.getValue()[1]) {
                 // deprojection
-                push_to_pointcloud (output, i, j,
-                                    l_rs_cam->depth->get_distance(j,i));
+                if (l_rs_cam) {
+                    push_to_pointcloud (output, i, j, l_rs_cam->depth->get_distance(j,i));
+                } else {
+                    push_to_pointcloud (output, depth_im, i, j);
+                }
             }
         }
         // the end

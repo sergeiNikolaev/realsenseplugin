@@ -24,7 +24,7 @@
 ******************************************************************************/
 #pragma once
 
-#include <sofa/realsenseplugin/projector/RealSenseAbstractProjector_old.h>
+#include <../deprecated/sofa/realsenseplugin/projector/RealSenseAbstractProjector_old.h>
 
 namespace sofa {
 
@@ -56,7 +56,7 @@ public:
     }
 
 private :
-    virtual void writeOfflineToOutput (RealSenseDistFrame::RealSenseDistStruct & diststruct, const cv::Mat & depth_im, int downSample) override {
+    virtual void writeOfflineToOutput (RealSenseDistFrame_old::RealSenseDistStruct & diststruct, const cv::Mat & depth_im, int downSample) override {
         // setup output
         const helper::vector<defaulttype::Vector2> input = d_input.getValue() ;
         helper::vector<defaulttype::Vector3> & output = *d_output.beginEdit() ;
@@ -76,7 +76,7 @@ private :
         d_output.endEdit();
     }
 
-    virtual void writeOnlineToOutput (rs2::depth_frame & depth, RealSenseDistFrame::RealSenseDistStruct & diststruct, const cv::Mat & depth_im, int downSample) override {
+    virtual void writeOnlineToOutput (rs2::depth_frame & depth, RealSenseDistFrame_old::RealSenseDistStruct & diststruct, const cv::Mat & depth_im, int downSample) override {
         // setup output
         const helper::vector<defaulttype::Vector2> input = d_input.getValue() ;
         helper::vector<defaulttype::Vector3> & output = *d_output.beginEdit() ;

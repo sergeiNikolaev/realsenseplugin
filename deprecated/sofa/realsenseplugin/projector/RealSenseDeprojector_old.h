@@ -24,7 +24,7 @@
 ******************************************************************************/
 #pragma once
 
-#include <sofa/realsenseplugin/projector/RealSenseAbstractProjector_old.h>
+#include <../deprecated/sofa/realsenseplugin/projector/RealSenseAbstractProjector_old.h>
 
 namespace sofa {
 
@@ -114,8 +114,8 @@ private :
      * \param snapshot_dist_filename
      */
     inline void _write_distFrame (std::string snapshot_dist_filename) {
-        RealSenseDistFrame distframe = d_distframe.getValue() ;
-        RealSenseDistFrame::RealSenseDistStruct diststruct = distframe.getFrame();
+        RealSenseDistFrame_old distframe = d_distframe.getValue() ;
+        RealSenseDistFrame_old::RealSenseDistStruct diststruct = distframe.getFrame();
 
         std::FILE* filestream = std::fopen(snapshot_dist_filename.c_str(), "wb") ;
         if (filestream == nullptr) {
@@ -144,7 +144,7 @@ private :
      * \param depth_im
      * \param downSample
      */
-    virtual void writeOfflineToOutput (RealSenseDistFrame::RealSenseDistStruct & diststruct, const cv::Mat & depth_im, int downSample) override {
+    virtual void writeOfflineToOutput (RealSenseDistFrame_old::RealSenseDistStruct & diststruct, const cv::Mat & depth_im, int downSample) override {
         helper::vector<defaulttype::Vector3> & outpoints = *d_output.beginEdit() ;
         outpoints.clear() ;
         m_pointcloud->clear();
@@ -171,7 +171,7 @@ private :
      * \param depth_im
      * \param downSample
      */
-    virtual void writeOnlineToOutput (rs2::depth_frame & depth, RealSenseDistFrame::RealSenseDistStruct & diststruct, const cv::Mat & depth_im, int downSample) override {
+    virtual void writeOnlineToOutput (rs2::depth_frame & depth, RealSenseDistFrame_old::RealSenseDistStruct & diststruct, const cv::Mat & depth_im, int downSample) override {
         helper::vector<defaulttype::Vector3> & outpoints = *d_output.beginEdit() ;
         outpoints.clear() ;
         for (size_t i = 0 ; i < diststruct._height; ++i) {

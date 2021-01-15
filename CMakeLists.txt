@@ -17,7 +17,7 @@ find_package(realsense2 REQUIRED)
 #find_package(Boost 1.59 COMPONENTS system filesystem REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(OpenCVPlugin QUIET)
-#find_package(PCLPlugin REQUIRED)
+find_package(PCLPlugin REQUIRED)
 
 #set(ALL_LIBRARIES ${OpenCV_LIBS})
 
@@ -59,9 +59,9 @@ file(GLOB_RECURSE IGNORED_FILES
 )
 
 file(GLOB_RECURSE DEPRECATED_FILES
-	"deprecated/*.h"
-	"deprecated/*.inl"
-	"deprecated/*.cpp"
+	"deprecated/sofa/realsenseplugin/*.h"
+	"deprecated/sofa/realsenseplugin/*.inl"
+	"deprecated/sofa/realsenseplugin/*.cpp"
 )
 
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
@@ -69,7 +69,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O2")
 
 #set_directory_properties( PROPERTIES COMPILE_DEFINITIONS "" )
 set_source_files_properties(${IGNORED_FILES} PROPERTIES HEADER_FILE_ONLY TRUE)
-set_source_files_properties(${DEPRECATED_FILES} PROPERTIES HEADER_FILE_ONLY TRUE)
+#set_source_files_properties(${DEPRECATED_FILES} PROPERTIES HEADER_FILE_ONLY TRUE)
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
@@ -101,7 +101,7 @@ target_link_libraries(
 	SofaGuiCommon SofaBaseVisual
 	SofaExporter SofaLoader
 	SofaMiscForceField
-	SofaGeneralEngine
+	SofaGeneralEngine PCLPlugin
 )
 if (OpenCVPlugin_FOUND)
 	target_link_libraries( ${PROJECT_NAME} OpenCVPlugin )

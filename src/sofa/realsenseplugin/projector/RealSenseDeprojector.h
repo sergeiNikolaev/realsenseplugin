@@ -110,9 +110,13 @@ private :
         outpoints.clear() ;
         for (size_t i = 0 ; i < depth_im.rows/downSample; ++i) {
             for (size_t j = 0 ; j < depth_im.cols/downSample ; ++j) {
-                push_to_pointcloud(outpoints, downSample*i, downSample*j,
+                if (l_rs_cam) {
+                    push_to_pointcloud(outpoints, downSample*i, downSample*j,
                                    l_rs_cam->depth->get_distance(downSample*j,downSample*i));
-//                push_to_pointcloud(outpoints, depth_im, downSample*i, downSample*j);
+//                  push_to_pointcloud(outpoints, depth_im, downSample*i, downSample*j);
+                } else {
+                    push_to_pointcloud (outpoints, depth_im, downSample*i, downSample*j);
+                }
             }
         }
         d_output.endEdit();
