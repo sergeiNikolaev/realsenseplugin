@@ -80,7 +80,9 @@ public :
     /// \brief synthetic volume pointcloud
     Data<helper::vector<defaulttype::Vector3> > d_synthvolume ;
 
-    Data<int> d_scale ;
+    Data<double> d_scale;
+    Data<double> d_zscale;
+    Data<double> d_zshift;
     DataCallback c_scale ;
 
     /// \brief path to intrinsics file
@@ -135,7 +137,9 @@ public :
             )
         ), d_output(initData(&d_output, "output", "output 3D position"))
         , d_synthvolume(initData(&d_synthvolume, "synthvol", "synthetic volume for ICP optimization"))
-        , d_scale(initData(&d_scale, 100, "scale", "point cloud scaling factor"))
+        , d_scale(initData(&d_scale, 1.0, "scale", "point cloud scaling factor"))
+        , d_zscale(initData(&d_zscale, 1.0, "zscale", "point cloud z scaling factor"))
+        , d_zshift(initData(&d_zshift, 1.0, "zshift", "point cloud z shifting factor"))
         // offline reco
         , d_intrinsics(initData(&d_intrinsics, std::string("intrinsics.log"), "intrinsicsPath", "path to realsense intrinsics file to read from"))
         , d_intrinsicParameters(initData(&d_intrinsicParameters, "intrinsicParameters", "vector output with camera intrinsic parameters"))
@@ -379,10 +383,30 @@ public :
         std::cout << "Point coordiantes: X: " <<  point3d[0] << " Y: " <<  point3d[1] << " Z: " <<  point3d[2] << std::endl;
         defaulttype::Vector3 point = scalePoint(point3d) ;
         //m_pointcloud->push_back(pt);
-        std::cout << "Point coordiantes: X: " <<  point[0] << " Y: " <<  point[1] << " Z: " <<  point[2] << std::endl;
+        std::cout << "Scaled point coordiantes: X: " <<  point[0] << " Y: " <<  point[1] << " Z: " <<  point[2] << std::endl;
 
         m_pointcloud.push_back(point) ;
         std::cout << "Next point" << std::endl;
+
+        if (d_flip.getValue()) {
+            point = defaulttype::Vector3(point[1], point[0], - point[2]) ;
+        }
+        applyRotationTranslation(point);
+        outpoints.push_back(point) ;
+    }
+
+    void image_to_pointcloud(helper::vector<defaulttype::Vector3> & outpoints,
+                             const cv::Mat & depth_im, size_t i, size_t j)
+    {
+        float depthvalue = (float)(depth_im.at<const uchar>(i,j));
+        float point3d[3] = {
+            (i - ppx) * depthvalue * inv_fx * .1,
+            (j - ppy) * depthvalue * inv_fy * .1,
+            depthvalue
+        } ;
+
+        defaulttype::Vector3 point = scalePoint(point3d) ;
+        m_pointcloud.push_back(point) ;
 
         if (d_flip.getValue()) {
             point = defaulttype::Vector3(point[1], point[0], - point[2]) ;
@@ -423,8 +447,9 @@ public :
      * \return scaled point as pcl::PointXYZ
      */
     inline defaulttype::Vector3 scalePoint (float * point3d) {
-        float z_scale = 0.1, z_shift = 35.0;
-        float scale = (float)d_scale.getValue()/100.f * 0.64f;
+        double z_scale = d_zscale.getValue();
+        double z_shift = d_zshift.getValue();
+        double scale = d_scale.getValue();
         return defaulttype::Vector3 (
             scale*point3d[0],
             scale*point3d[1],
