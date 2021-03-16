@@ -223,7 +223,7 @@ public :
             defaulttype::Vector4(cam_intrinsics.fx, cam_intrinsics.fy, cam_intrinsics.ppx, cam_intrinsics.ppy)
         );
 
-//      // for printing intrinsics
+      // for printing intrinsics
 //        std::cout <<
 //            cam_intrinsics.width << std::endl <<
 //            cam_intrinsics.height<< std::endl <<
@@ -370,7 +370,7 @@ public :
             depthvalue
         } ;
 
-//        // check for outliers
+        // check for outliers
 //        if (std::abs(point3d[0]) < 1e-3 ||
 //            std::abs(point3d[1]) < 1e-3 ||
 //            std::abs(point3d[2]) < 1e-3 ||
