@@ -82,6 +82,8 @@ public :
 
     Data<double> d_scale;
     Data<double> d_zscale;
+    Data<double> d_xshift;
+    Data<double> d_yshift;
     Data<double> d_zshift;
     DataCallback c_scale ;
 
@@ -139,7 +141,9 @@ public :
         , d_synthvolume(initData(&d_synthvolume, "synthvol", "synthetic volume for ICP optimization"))
         , d_scale(initData(&d_scale, 1.0, "scale", "point cloud scaling factor"))
         , d_zscale(initData(&d_zscale, 1.0, "zscale", "point cloud z scaling factor"))
-        , d_zshift(initData(&d_zshift, 1.0, "zshift", "point cloud z shifting factor"))
+        , d_xshift(initData(&d_xshift, 0.0, "xshift", "point cloud x shifting factor"))
+        , d_yshift(initData(&d_yshift, 0.0, "yshift", "point cloud y shifting factor"))
+        , d_zshift(initData(&d_zshift, 0.0, "zshift", "point cloud z shifting factor"))
         // offline reco
         , d_intrinsics(initData(&d_intrinsics, std::string("intrinsics.log"), "intrinsicsPath", "path to realsense intrinsics file to read from"))
         , d_intrinsicParameters(initData(&d_intrinsicParameters, "intrinsicParameters", "vector output with camera intrinsic parameters"))
@@ -448,11 +452,13 @@ public :
      */
     inline defaulttype::Vector3 scalePoint (float * point3d) {
         double z_scale = d_zscale.getValue();
+        double x_shift = d_xshift.getValue();
+        double y_shift = d_yshift.getValue();
         double z_shift = d_zshift.getValue();
         double scale = d_scale.getValue();
         return defaulttype::Vector3 (
-            scale*point3d[0],
-            scale*point3d[1],
+            scale*(point3d[0] - x_shift),
+            scale*(point3d[1] - y_shift),
             -scale*(point3d[2] - z_shift) * z_scale
         ) ;
     }

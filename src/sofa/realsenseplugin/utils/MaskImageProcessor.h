@@ -156,7 +156,7 @@ public:
     void handleEvent(sofa::core::objectmodel::Event* event) {
         if(sofa::simulation::AnimateBeginEvent::checkEventType(event)) {
             if (paused) {
-            // don't read frame
+                // don't read frame
                 return;
             }
 
@@ -179,6 +179,9 @@ public:
 
             // compute boundboxes for contours and keep their centers
             helper::WriteAccessor<Data<helper::vector<defaulttype::Vector2> >> vMaskPoints = d_out;
+            if (contours.size() > vMaskPoints.size()) {
+                vMaskPoints.resize(contours.size());
+            }
             for(size_t index = 0; index < contours.size(); index++) {
                 defaulttype::Vector2 maxBound = defaulttype::Vector2(-1e100, -1e100);
                 defaulttype::Vector2 minBound = defaulttype::Vector2(1e100, 1e100);
@@ -191,6 +194,10 @@ public:
                 }
                 vMaskPoints[index] = (maxBound + minBound) / 2.0;
             }
+            for(size_t index = contours.size(); index < vMaskPoints.size(); index++) {
+                vMaskPoints[index] = defaulttype::Vector2(-1e100, -1e100);
+            }
+
         }
 
         if (sofa::core::objectmodel::KeypressedEvent * ev = dynamic_cast<sofa::core::objectmodel::KeypressedEvent*>(event)){
